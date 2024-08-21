@@ -1,0 +1,58 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub JuiceShop API 
+    url: https://virtserver.swaggerhub.com/ailton07/JuiceShop/1.0.0
+info:
+  description: JuiceShop API Description.
+  version: "1.0.0"
+  title: JuiceShop API Description
+  contact:
+    email: you@your-company.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: View Basket
+    description: View another user's shopping basket
+paths:
+  /rest/user/login:
+    post:
+      tags: ["View Basket"]
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginUserRequest'
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/LoginUserResponse'
+          links:
+            getBasketById:
+              operationId: getBasketById
+              parameters:
+                id: $response.body#/authentication.bid
+  /rest/basket/{bid}:
+    get:
+      tags: ["View Basket"]
+      operationId: getBasketById
+      parameters:
+      - name: bid
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/GetBasketByIdResponse'

@@ -1,0 +1,50 @@
+\section{Methodology and the Tool {\nameTool}}
+\label{sec:methodology}
+
+In this section, we first briefly introduce the methodology we follow to detect BOLA attacks in OpenAPI specifications. Then we introduce {\nameTool}, a Python3-based tool that analyzes information system event logs and detects BOLA attacks using our methodology.
+
+
+Figure~\ref{fig:sketch} sketches the steps of our approach. First, we transform the OpenAPI specification in its corresponding Colored Petri net,  applying the algorithms described in Section~\ref{sec:transformation}.  We call this step  {\sc Model-to-model transformation}. We then apply process mining techniques (namely, conformance checking techniques), combining the CPN obtained in the previous step with the JSON event logs collected from the web servers running the application that implements the given OpenAPI specification as initial input. As a result, we get an error log file highlighting the detection of BOLA attacks. In what follows, we explain each step of the methodology in more detail.
+
+\begin{figure*}
+	\centering
+\scalebox{.9}
+{
+\begin{tikzpicture}%[node distance = 0pt]
+
+  % Las cajitas...
+
+	\node[] (openapispecs) {\scalebox{3}{\faFileO}};
+	\node[text centered,text width=3cm] at ($(openapispecs.south) + (0,-15pt)$) {\em OpenAPI specification file};
+	\node[] (cpn) at ($(openapispecs.east) + (5,0cm)$)  {\includegraphics[width=0.3\columnwidth]{figures/SimpleJuiceShop-initial-state}};
+	\node[text centered,text width=3cm] at ($(cpn.south) + (0,-10pt)$) {\em CPN model};
+	
+	\node[] (ghost)  at ($(cpn.east) + (2.5cm,0cm)$) { };
+	\node[yshift=-50pt] (logfiles)  at ($(cpn.east) + (2.5cm,0cm)$) {\scalebox{3}{\faFileO}};
+	\node[text centered,text width=3cm] at ($(logfiles.south) + (0,-10pt)$) {\em JSON event logs};
+
+	\node[] (errorlogs)  at ($(cpn.east) + (5cm,0cm)$) {\scalebox{3}{\faFileO}};
+	\node[text centered,text width=3cm] at ($(errorlogs.south) + (0,-10pt)$) {\em Error log files};
+
+    \draw[<->,dashed] ($(openapispecs.west)+(-.85,2.5cm)$) -- node[above] {\sc \circled{1} Model-to-model transformation} ($(cpn.east)+(0.85cm,2.5cm)$); 
+    
+    \draw[<->,dashed] ($(cpn.east)+(.85,2.5cm)$) -- node[above] {\sc \circled{2} Conformance checking} ($(errorlogs.east)+(0.85cm,2.5cm)$); 
+
+	\draw[-to,line width=1pt] (openapispecs.east) -- node[above] { } node[below] { } (cpn.west);
+	\draw[-to,dotted,line width=1pt] (logfiles.north) -- node[above] { } node[below] { } (ghost.south);
+    \draw[-to,line width=1pt] (cpn.east) -- node[above] { } node[below] { } (errorlogs.west);
+\end{tikzpicture}
+}
+	\caption{Methodology to detect BOLA attacks in OpenAPI specifications.}
+	\label{fig:sketch}
+\end{figure*}
+
+\input{tex/transformation}
+\input{tex/detecting_bola_attacks}
+
+\subsection{Tool Support}
+
+
+
+We develop a tool, called {\nameTool}, to automatically perform the transformation of the OpenAPI model to Colored Petri nets and apply the conformance checking algorithm presented in~\cite{carrasquel2020checking} to detect attacks on broken access control vulnerabilities~\cite{AJBC-ICNGIoT-22}. {\nameTool} is freely accessible in our GitHub~\cite{links2cpn} and is developed in Python 3 on top of the \textit{Snakes}~\cite{pommereau2015snakes} library, a general-purpose Petri net library that allows the creation, transformation, and net manipulation. Using this library we implement the model transformation and the conformance checking algorithm. In addition to \textit{Snakes}, the tool also uses the \textit{openapi-schema-validator}~\footnote{Accessible in~\url{https://github.com/python-openapi/openapi-schema-validator}} library to validate and interpret OpenAPI 3.x specifications.
+

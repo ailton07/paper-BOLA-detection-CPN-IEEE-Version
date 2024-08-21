@@ -1,0 +1,210 @@
+%\documentclass[11pt,draftcls,peerreview,a4paper,twoside,onecolumn]{IEEEtran}
+\documentclass[11pt,journal,draftcls,onecolumn]{IEEEtran}
+%\documentclass[journal]{IEEEtran}
+% *************************************************************************
+
+% correct bad hyphenation here
+%\hyphenation{op-tical net-works semi-conduc-tor}
+\usepackage{graphicx}
+\usepackage{latexsym}
+\usepackage{times}
+
+
+\usepackage{color}
+\usepackage{amssymb}
+
+\usepackage[cmex10]{amsmath}
+\usepackage{multirow}
+\usepackage{colortbl}
+
+%\usepackage{algorithm}
+\usepackage{algorithmic} % Mandatory!
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+
+\renewcommand{\algorithmicfor}{\textbf{for each}}
+\usepackage[ruled, lined, linesnumbered, commentsnumbered, longend]{algorithm2e}
+\makeatletter
+\renewcommand{\@algocf@capt@plain}{above}% formerly {bottom}
+\makeatother
+
+\usepackage[utf8]{inputenc} % Caracteres con acentos.
+
+%\graphicspath{{Fig/}}
+
+% Avoid ENGLISH babel error message
+\makeatletter
+\def\markboth#1#2{\def\leftmark{\@IEEEcompsoconly{\sffamily}\MakeUppercase{\protect#1}}%
+\def\rightmark{\@IEEEcompsoconly{\sffamily}\MakeUppercase{\protect#2}}}
+\makeatother
+
+\usepackage[english]{babel} % English hyphenation
+\usepackage{url}
+
+%Propositions
+\newtheorem{proposition}{Proposition}
+\newtheorem{definition}{Definition}
+
+\newcommand{\secondAuthor}{Ricardo J. Rodr\'{i}guez}
+\newcommand{\secondAuthorShort}{R.~J.~Rodr\'{i}guez}
+\newcommand{\mailRJ}{rjrodriguez@unizar.es}
+\newcommand{\DIIS}{Dept. of Computer Science and Systems Engineering}
+\newcommand{\IIIA}{Aragón Institute of Engineering Research (I3A)}
+\newcommand{\UZ}{University of Zaragoza, Spain}
+
+
+\newcommand{\mailTo}[1]{\url{#1}}
+
+\newcommand{\firstAuthor}{Ailton Santos Filho}
+\newcommand{\firstAuthorShort}{A.~S.~Filho}
+\newcommand{\thirdAuthor}{Eduardo L. Feitosa}
+\newcommand{\thirdAuthorShort}{E.~L.~Feitosa}
+\newcommand{\mailAilton}{assf@icomp.ufam.edu.br}
+\newcommand{\mailEduardo}{efeitosa@icomp.ufam.edu.br}
+
+
+\newcommand{\paperTitle}{Automatic Transformation of OpenAPI Specifications to Colored Petri Nets for Security Analysis}
+
+\newcommand{\paperTitleShort}{\paperTitle}
+\newcommand{\authorNames}{{\firstAuthor}, {\secondAuthor}, {\thirdAuthor}}
+\newcommand{\authorNamesShort}{{\firstAuthorShort}, {\secondAuthorShort}, {\thirdAuthorShort}}
+\newcommand{\authorsMailTo}{\mailTo{\mailRJ}}
+\newcommand{\keywordsList}{RESTful web services, OpenAPI, Colored Petri nets, security analysis, vulnerabilities, broken access control, Web application security}
+
+\newcommand{\correspondingText}{Corresponding author: Ricardo~J.~Rodríguez. {\DepUZ},
+{\UZ}.
+Email: {\mailTo{\mailRJ}}. Phone: (+34) 876555531 Fax: (+34) 976 761914.}
+
+
+\newcommand{\ackText}{The research of Ricardo J. Rodríguez was supported by the grant TED2021-131115A-I00 funded by MCIN/AEI/ 10.13039/501100011033 and by European Union NextGenerationEU/PRTR, and by the University, Industry and Innovation Department of the Aragonese Government under {\em Programa de Proyectos Estratégicos de Grupos de Investigación} (DisCo research group, ref. T21-20R).}
+
+
+
+\newcommand{\IGNORE}[1]{}
+\newcommand{\TODO}[1]{\textcolor{red}{#1}}
+\newcommand{\REVIEW}[1]{\textcolor{blue}{#1}}
+\newcommand{\comentarioJavier}[1]{ \textcolor{blue}{#1}}
+
+\usepackage{hyperref}
+\usepackage{breakurl}
+\hypersetup{
+  baseurl={\mailRJ},
+  pdftitle={{\paperTitle} - {\authorNamesShort}},%
+  pdfauthor={\authorNames},%
+  pdfproducer={\LaTeX},%
+  pdfsubject={{\paperTitle} - {\authorNamesShort}},%
+  pdfkeywords={\keywordsList}%
+}
+
+\usepackage{listings}
+\usepackage{xcolor}
+\newcommand*{\doi}[1]{}
+
+\definecolor{LightCyan}{rgb}{0.88,1,1}
+\definecolor{LightGray}{gray}{0.85}
+
+\usepackage{resizegather}
+
+\usepackage{lipsum}
+\usepackage{cite}
+
+\usepackage{listings}
+
+\newcommand{\precond}[1]{\hspace*{-0.4em}~^{\bullet}\hspace*{-0.05em}#1}
+
+\def\nameTool{\tt Links2CPN}
+
+\usepackage{enumerate}
+
+\usepackage{tikz}
+\usetikzlibrary{babel,positioning,calc,arrows.meta,bending,fit,backgrounds,arrows,shapes, decorations}
+
+\usepackage{fontawesome}
+  \tikzstyle{label}=[
+  font=\footnotesize,
+  ]
+
+  \tikzstyle{box}=[
+  draw=black,
+  rectangle,
+  minimum height=20pt,
+  text width=90pt,
+  fill=white,
+  text centered]
+  
+  \tikzstyle{boxa}=[
+  label,
+  text centered,
+  left,
+  midway,
+  text width=50pt
+  ]
+\tikzstyle{separator}=
+[minimum width=50pt]
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+            \node[shape=circle,draw,inner sep=2pt,solid] (char) {#1};}}
+
+\begin{document}
+
+\title{\paperTitle}
+
+\author{\firstAuthor, %\IEEEmembership{,~Member,~IEEE},
+~\secondAuthor,%
+~and~\thirdAuthor
+\thanks{{\firstAuthorShort} and {\thirdAuthorShort} are with the Institute of Computing, Federal University of Amazonas (UFAM). E-mail: {\mailTo{\mailAilton}, \mailTo{\mailEduardo}}}
+\thanks{{\secondAuthorShort} is with the {\IIIA}, {\UZ}. E-mail:
+{\mailTo{\mailRJ}}}%
+}
+
+
+\markboth{Submitted to IEEE Transactions on Systems, Man, and Cybernetics:
+Systems}{}
+
+\maketitle
+
+
+\input{definition}
+\input{commands}
+
+%%%
+% XXX Tablas y algoritmos: caption encima, no debajo
+%%%
+\input{tex/abstract}
+
+\begin{IEEEkeywords}
+\keywordsList
+\end{IEEEkeywords}
+
+\IEEEpeerreviewmaketitle
+
+\input{tex/introduction}
+\input{tex/background}
+\input{tex/running_example}
+
+\input{tex/methodology}
+\input{tex/evaluation}
+\input{tex/related_work}
+\input{tex/conclusions}
+
+
+%% ACKs
+%\section*{Acknowledgments}
+%{\ackText}
+
+
+%\bibliographystyle{IEEEtranNOURL}
+\bibliographystyle{acm}
+\bibliography{biblio}
+
+\appendix
+
+\section{Excerpt of OpenAPI Used as a Running Example}
+\label{apx:openapi_example}
+
+\lstinputlisting[frame=single,basicstyle=\ttfamily\small,caption={Excerpt of OpenAPI Used as a Running Example},label={lst:running_example_code}]{src/openapi.yml}
+
+
+%%
+% Bibliography
+
+\end{document} \grid

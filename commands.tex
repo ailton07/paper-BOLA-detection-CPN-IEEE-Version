@@ -1,0 +1,106 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Taken from PNotation_art (Petri nets community commands) %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% Odd Symbols, like Number Sets
+
+\newcommand{\Real}{\mbox{$\mathbb{R}$}}
+
+\newcommand{\Rational}
+{\mbox{${\mathchoice {\setbox0=\hbox{$\displaystyle\rm Q$}\hbox{\raise
+0.15\ht0\hbox to0pt{\kern0.4\wd0\vrule height0.8\ht0\hss}\box0}}
+{\setbox0=\hbox{$\textstyle\rm Q$}\hbox{\raise
+0.15\ht0\hbox to0pt{\kern0.4\wd0\vrule height0.8\ht0\hss}\box0}}
+{\setbox0=\hbox{$\scriptstyle\rm Q$}\hbox{\raise
+0.15\ht0\hbox to0pt{\kern0.4\wd0\vrule height0.7\ht0\hss}\box0}}
+{\setbox0=\hbox{$\scriptscriptstyle\rm Q$}\hbox{\raise
+0.15\ht0\hbox to0pt{\kern0.4\wd0\vrule height0.7\ht0\hss}\box0}}}$}}
+\newcommand{\tuple}[1]{\ensuremath{\langle{#1}\rangle}}
+
+\newcommand{\Integer}{\mbox{$\mathbb{Z}$}}
+
+\newcommand{\Nat}{\mbox{$\mathbb{N}$}}
+%\newcommand{\nexists}{\mbox{$\exists\!\!\!/ \ $}}          % doesn't exist
+
+%%% Type Style Control
+
+\newcommand{\acr}[1]{\ensuremath{\mathrm{#1}}}             % acronyms and log-like functions
+\newcommand{\vect}[1]{\ensuremath{\mathbf{#1}}} 	   % vectors and matrices
+\newcommand{\zeros}{\vect{0}}                              % vector 0
+\newcommand{\ones}{\vect{1}}                               % vector 1 (all ones)
+\newcommand{\oddvect}[1]{\ensuremath{\mathchoice           % odd vectors (e.g. greek letter)
+                           {\mbox{\large \boldmath ${#1}$}}%
+                           {\mbox{\normalsize \boldmath ${#1}$}}%
+                           {\mbox{\footnotesize \boldmath ${#1}$}}%
+                           {\mbox{\tiny \boldmath ${#1}$}}}%
+                        }
+
+%%% Probabilities, etc.
+
+\newcommand{\R}{\vect{R}}                      % routing matrix
+\newcommand{\Q}{\vect{Q}}                      % infinitesimal generator matrix
+\newcommand{\vpi}{\oddvect{\pi}}               % vector of probabilities in the steady state
+\newcommand{\vthr}{\oddvect{\chi}}             % vector of throughputs
+
+%%% Nets and Such
+
+\newcommand{\N}{\ensuremath{\mathcal{N}}}      % a net
+\newcommand{\NS}{\ensuremath{\mathcal{S}}}     % a net system
+
+%%%%% Main Net Objects
+
+\newcommand{\Pre}{\vect{Pre}}                  % the preincidence matrix
+\newcommand{\Post}{\vect{Post}}                % the postincidence matrix
+\newcommand{\C}{\vect{C}}                      % the incidence matrix
+\newcommand{\mo}{\ensuremath{\mathbf{m_0}}}                   % the initial marking
+\newcommand{\D}{\ensuremath{\vect{D}}}                   % delta
+                                               % pre- and post- sets
+% \newcommand{\preset}[1]{\ensuremath{\,\!^\bullet{#1}}}
+% \newcommand{\postset}[1]{\ensuremath{{#1}^\bullet}}
+                                               % firing something
+\newcommand{\fireseq}[1]{\raisebox{-.3ex}{\ensuremath{%
+\stackrel{\scriptstyle {#1}}{\longrightarrow}}}}
+
+%%%%% Conspicuous Net Things
+
+\newcommand{\mk}{\vect{m}}           % a marking
+\newcommand{\si}{\ensuremath{\sigma}}          % a firing sequence
+\newcommand{\vsi}{\oddvect{\si}}               % its firing count vector
+\newcommand{\vx}{\vect{x}}                     % a T-semiflow
+\newcommand{\vy}{\vect{y}}                     % a P-semiflow
+\newcommand{\vs}{\vect{s}}                     % Average service times vector
+\newcommand{\vm}{\vect{{\overline m}}}         % Average marking vector
+
+
+%%%%% Some Reserved Names, Acronyms, Objects, etc.
+
+\newcommand{\RS}{\acr{RS}}                     % Reachability Set
+\newcommand{\RG}{\acr{RG}}                     % Reachability Graph
+\newcommand{\La}{\acr{L}}                      % Language
+
+
+%%% Theorem-like Environments
+% 
+% \newtheorem{theorem}{Theorem}
+% \newtheorem{definition}[theorem]{Definition}
+% \newtheorem{proposition}[theorem]{Proposition}
+% \newtheorem{algorithm}[theorem]{Algorithm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% End of: Taken from PNotation_art (Petri nets community commands) %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%
+%Other commands %
+%%%%%%%%%%%%%%%%%
+
+\def\LS{\ensuremath{\mathcal{LS}}}             % Low level systems
+\newcommand{\BS}{\ensuremath{\mathcal{BS}}}    % Basic skeleton system
+\newcommand{\ES}{\ensuremath{\mathcal{ES}}}    % Extended system
+\newcommand{\TI}{\acr{TI}}                     % Set of interface transitions
+\newcommand{\B}{\vect{B}}                      % matrix B
+\newcommand{\K}{\vect{K}}                      % matrix K
+\newcommand{\EN}{\ensuremath{\mathcal{EN}}}    % Extended net
+\def\LN{\ensuremath{\mathcal{LN}}}             % Low level nets
+\newcommand{\BN}{\ensuremath{\mathcal{BN}}}    % Basic skeleton net
+\newcommand{\vg}{\vect{g}}                     % gain in WTS's

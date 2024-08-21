@@ -1,0 +1,50 @@
+\section{Related Work}
+\label{sec:related_works}
+
+
+A lot of research has been done in the field of RESTful application modeling and documentation~\cite{ivanchikj2021restalk}. In 2015, a widely accepted standard emerged with the OpenAPI initiative effort to standardize the description of RESTful APIs. Although the OpenAPI specification can provide details about the relationship between the operations, it focuses on structural and data modeling aspects, lacking behavioral aspects~\cite{ivanchikj2021restalk}. In this section, we review works that address the problem of using non-domain-specific languages to visually model the behavior of REST and RESTful APIs. In particular, we divide the discussion into OpenAPI specification, Petri net-based, and UML based approaches.
+
+\subsection{OpenAPI Specification Approaches}
+
+A systematization of the Insecure Direct Object Reference (IDOR) and BOLA attack techniques based on the literature review and the analysis of real cases is provided in~\cite{DBLP:journals/corr/abs-2201-10833}, with the purpose of proposing an approach to describe IDOR/BOLA attacks based on the properties of the OpenAPI specifications and, subsequently, develop an algorithm for detecting potential (i.e., not confirmed) IDOR/BOLA vulnerabilities. The proposed detection approach consists of providing a valid OpenAPI specification, annotating potentially vulnerable properties, and determining which attack vector techniques are applicable.  If any condition of attack vector techniques is found to be met, then it is considered a potential IDOR/BOLA vulnerability that needs to be checked. Additionally, it specifies a combination of endpoints, operations, and parameters that are potentially vulnerable and can be attacked with corresponding attack vectors. After this step, an analyst must manually test and verify whether the vulnerability actually exists. This approach is applied to two experiments. The first experiment is to generate example specifications that contain at least one vulnerability for each established detection rule. The second experiment uses publicly available specifications containing potential vulnerabilities, where the exact number of potential (access control) vulnerabilities is not defined.
+
+
+An extension to the OpenAPI specification, called the OAS Security Scheme, is proposed in~\cite{haddad2022openapi}. This extension introduces new properties to function as a security control mechanism for declarative security descriptions, with the goal of providing and standardizing an authorization capability to protect resources from unauthorized access. Using this custom OpenAPI specification, a specialized authorization module can apply object-level authorization checks while the API is running and calls are made. Although this extension may encourage further studies to improve the security of the OpenAPI specification, its scalability is not fully studied.
+
+
+
+These works consider the OpenAPI specification as a source of truth to establish a baseline of how the API should work, as our approach does. Therefore, this is a prerequisite for their correct functioning. Additionally, the documentation must be reliable, that is, correctly describe the underlying API. The approach given in~\cite{DBLP:journals/corr/abs-2201-10833} is complementary to ours, which can provide another vulnerability analysis as a way to detect false positives (or false negatives) from the previous approach. Although our approach is also applicable to the extension of the OpenAPI specification proposed in~\cite{haddad2022openapi}, it may require additional remodeling to capture the newly introduced security control mechanism.
+
+
+\subsection{Petri Net-based Approaches}
+
+In \cite{decker2008restful}, the authors introduce a formal model for \textit{process enactment} in REST systems using \textit{Service Nets}, another class of  Petri Nets. Later, in \cite{alarcon2010hypermedia}, this formalism is used to convert a REST description language (proposed by the authors) into a Service Net.
+%\textit{Resource Linking Language} (ReLL), a language proposed by the authors to describe REST services.
+Unfortunately, as discussed in~\cite{kallab2017using},  these  approaches  ignore  internal  hypermedia links,  describe  all  tokens  in  XML  only, and do  not  check  the  correctness  of composition  behavior. Also, they do not describe RESTful APIs, but REST. Unlike these approaches, our model transformation approach is based on a standard specification and is well suited for describing RESTful APIs.
+
+In~\cite{li2011design} and~\cite{li2015designing}, the authors propose \textit{REST Chart}, a Petri net-based XML modeling framework (model and markup language) to describe REST APIs without violating the REST constraints. Their approach is based on modeling REST APIs as a set of hypermedia representations and transitions between them, where each transition specifies the possible interactions with the resource referenced by a hyperlink in a type representation.
+%
+In~\cite{kallab2017using}, the authors propose a formal CPN-based language for modeling and verifying RESTful service composition. They defined data types as colors, a unique definition of a resource as a service identified by a URI, which aligns with the OpenAPI specification and focuses on using CPNs properties  to verify the correctness of RESTful composition behaviors. However, the authors do not discuss how their approach can be used to represent multiple users at the same time. By contrast, our model transformation approach is well suited to representing concurrent users.
+
+\subsection{UML-based Approaches}
+
+Other approaches are based on the {\em Unified Modeling Language} (UML)~\cite{UML-11}, a widely adopted standard notation for modeling software systems. In~\cite{alowisheq2011resource}, the authors propose an approach to describe RESTful and resource-oriented Web services using UML collaboration diagrams. Their model describes the type of resource, the relationships between them, and the control flow. However, the data flow is not considered.
+%
+In~\cite{rauf2014design}, the authors provide a methodology for designing REST web service interfaces using a UML class diagram to represent the resource mode and a UML state machine diagram (with state invariants) to represent the behavioral model of a REST web service. Their model focuses on states that use the POST, PUT, or DELETE requests to trigger flow between states, while  the GET method is used to check for state invariants. 
+%
+In~\cite{ed2019wapiml}, the authors proposed \textit{WAPIML}, a software tool for converting the OpenAPI specification to an annotated UML class diagram, editing the UML model, and converting it back to the OpenAPI specification.
+
+\subsection{FSM-based Approaches}
+
+In \cite{zuzak2011formal}, the authors present a finite-state machine with epsilon transitions for modeling RESTful systems. This model follows some REST constraints (i.e., uniform interface, stateless client-server operation, and code-on-demand execution), but is not suitable for modeling RESTful systems.
+
+
+%\subsection{BPMN Choreographies}
+
+%\subsection{Linear Logic-based Approaches}
+
+%\subsection{Process Algebra-based Approaches}
+
+%\subsection{Semantic-based Approaches}
+
+As shown, many works focus on modeling REST systems that are also described in non-standard ways. Rather, our approach is to model the data flow of the RESTful system described through the OpenAPI specification. In addition, we provide a tool to make it easy to use our approach.

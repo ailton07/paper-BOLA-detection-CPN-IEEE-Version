@@ -1,0 +1,37 @@
+\subsection{Conformance Checking: Detecting Broken Object Level Authorization Attacks}
+\label{sec:detecting_bola}
+
+%In this section, we explain how we can detect BOLA attacks in the CPN obtained after transformation of an OpenAPI specification. 
+%
+
+Once we have a CPN modeled from an OpenAPI specification and a set of HTTP requests and responses (i.e., a JSON event logs), we use process mining techniques to verify the correctness of the request and response pairs collected in a system trace. In particular, we work with information system event logs that consist of recorded traces, describing  the  activities executed  and the  resources involved (for example,  users,  data objects, requests, and responses). We then use these logged traces to apply the conformance checking algorithm presented in~\cite{carrasquel2020checking}. Basically, this algorithm works like a replay algorithm. By replaying each trace of an event log on top of a CPN, this algorithm can discover control flow deviations due to unavailable resources, rule violations, and differences between modeled and actual resources. For completeness, we refer the reader to~\cite{carrasquel2020checking} to get a more detailed idea of the algorithm. Despite their simplicity, token-based replay algorithms have became the standard not only for conformance checking, but also for decision mining and performance analysis, among others~\cite{Carmona2018}.
+
+To use it, we need to create an event log based on the request-response pairs that contains the CPN related information. In particular, this file must contain the URL, URL parameters, HTTP methods, status code, client IP and HTTP header, timestamp, request body, and response body. To make it easier to perform programmatic operations on these logs, we parse the original webserver logs to generate a JSON format file containing the required information. Listing~\ref{lst:example_JSON} shows an example of a single event log using this JSON format. Note that this processing step can be performed on any information system event log, such as {\tt Apache2} or {\tt nginx}, and only minor adaptations are necessary to parse the original event log. An example of the modifications that need to be made to a Web server in order to generate event logs with the format discussed is available online\footnote{https://github.com/ailton07/juice-shop-with-winston/blob/079ea6d65463b99c0d25a9ad116127575ce96e9a/server.ts\#L305}.
+
+% fonte: https://tex.stackexchange.com/a/336992
+\lstset{
+    string=[s]{"}{"},
+    stringstyle=\color{blue},
+    comment=[l]{:},
+    commentstyle=\color{black},
+}
+\begin{lstlisting}[caption={JSON event log example.},captionpos=t, label={lst:example_JSON}, basicstyle=\ttfamily\scriptsize,frame=single,breaklines=true]
+{
+   "timestamp":"2022-11-01T22:35:33.107Z",
+   "ip":"::1",
+   "message":"GET /rest/user/whoami 200 4ms",
+   "method":"GET",
+   "uri":"/rest/user/whoami",
+   "requestBody":{
+   },
+   "responseBody":{
+      "user":{
+         "id": "123"
+      }
+   },
+   "statusCode":200,
+   "headerAuthorization":"Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..."
+}
+\end{lstlisting}
+
+Given a file of event logs and the CPN associated with the corresponding OpenAPI specification, we can now run the conformance checking algorithm presented in~\cite{carrasquel2020checking}. As commented above, this replay algorithm allows us to follow the evolution of the system, checking if the firing of transitions enabled in the CPN is correct. When firing a transition is feasible, it means that the observed behavior is correct and  expected. On the contrary, there are two possible reasons why the firing of a transition is not possible: (i) there are no tokens in the input places of the transition; or (ii) the token at the input places of the transition has a different value than expected. The first case corresponds to a control flow violation and is associated with an expected behavior of the system. On the other hand, the second case corresponds to a data flow violation. We assume that this behavior is associated with a BOLA attack, and therefore detecting a data flow violation at the CPN level allows us to detect BOLA attacks in the OpenAPI specification.

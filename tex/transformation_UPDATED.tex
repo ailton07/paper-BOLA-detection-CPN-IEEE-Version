@@ -1,0 +1,110 @@
+\section{Model Transformation: from OpenAPI to CPN}
+\label{sec:transformation}
+
+In this section, we present a model transformation from a valid OpenAPI document to a CPN $N=\tuple{P,T,A,V,G,E,\pi}$, where:
+
+\begin{itemize}
+
+\item \(P\) is the finite set of colored places (in \(\Sigma\)) associated with the representation of an API resource.
+
+\item \(\Sigma\) is the set color composed of \(\Sigma \subseteq \{ DataType\}\), where \textit{DataType = \{null, boolean, object, array, number, string\}} \(\times Id \), in other words, it is a set formed by the six primitive types defined by the \textit{JSON Schema Specification Wright Draft~\footnote{\url{https://json-schema.org/specification.html}}} and a set of unique user identifiers in string format, called \(Id\).
+
+\item \(T\) is the finite set of transitions representing a single API operation on a path and its response. 
+It can be seen as a triad formed by the \textit{HTTP method}, the path of an API endpoint and an \textit{HTTP Status Code}.
+
+\item \(A\) is the finite set of CPN arcs, connecting places with transitions according to the API structure. It contains an arc expression function.
+
+\item \(V\) is the finite set of variables with CPN types, where \(Type(v)\) \(\in\) \(\Sigma\),  for all \(v\) \(\in\) \(V\).
+
+\item \(G\) is the finite set of CPN guard functions, expressing conditions for a given transition to become active.
+
+\item \(E\) is the finite set of CPN arc expressions. May contain constants and variables \(v\) \(\in\) \(V\), by assigning values to the constants, the value of the expression is calculated.
+
+
+\end{itemize}
+
+Algorithm~1 describes the model transformation. It has as input an OpenAPI Specification $doc$ and as output a Colored PetriNet $CPN$. In the algorithm, names defined in Snake Case (like http\_method, create\_transition, etc) are names of variables and methods created by the algorithm, while names in Camel Case and Pascal Case (like PathItemObject, ResponseObject, responses, etc) are names of objects and structures of the OpenAPI Specification.
+
+First, we create an empty CPN (line $1$). Then, we access the attribute \textit{path} from  $doc$, composed of key-value pairs where the key is a \textit{path} and the value is a \textit{PathItemObject} (line $2$).
+We iterate over each \textit{PathItemObject}, obtaining a set of key-value pairs where the key is an \textit{HTTP method} and the value is an \textit{OperationObject} (line $3$).
+We iterate over the attribute \textit{responses} from \textit{OperationObject}, obtaining key-value pairs where the key is an \textit{HTTP status code} and the value is a \textit{Response Object} (line $4$).
+Then, we create a new transition \(t \in T\) formed by the triad \textit{(path, http\_method, http\_status\_code)} (line $5$) and we add it to the CPN (line $6$).
+
+Next, we access the attribute \textit{requestBody} from \textit{OperationObject} and attribute it to the variable \textit{request\_body} (line $7$).
+We iterate over the attribute \textit{content} from the \textit{request\_body} obtaining key-value pairs formed by a string \textit{media\_type} and a \textit{MediaTypeObject} (line $8$). 
+We assign the contents of the \textit{properties} attribute of the \textit{schema} of the \textit{MediaTypeObject} to the \textit{list\_of\_properties} variable (line $9$).
+We iterate over \textit{list\_of\_properties}, obtaining key-value pairs, where the key is a string, and the value is one of the primitive types defined in \textit{JSON Schema Specification Wright Draft} (line $10$).
+Using this key and the \textit{OperationObject}, we can check if this property is involved with an OpenAPI link as a link's target or source (line $11$).
+In case this property is related to some OpenAPI link, we create a place \( p \in P\) with a color defined by the \textit{SchemaObject} from \textit{OperationObject} (line $12$), we added it to the CPN (line $13$), and connect it to the recently created transition, through an arch-PT \(a \in A\) (line $14$).
+
+Then, we access the \textit{parameters} attribute from \textit{OperationObject}, obtaining a list of \textit{ParameterObjects}, and we iterate over it (line $18$).
+For each \textit{ParameterObject}, we check if it is involved with an OpenAPI link as a link's target or source (line $19$). In that case, we create a place  \( p \in P\) with a color defined by the \textit{SchemaObject} from \textit{OperationObject} (line $20$), we added it to the CPN (line $21$), and connect it to the recently created transition, through an arch-PT \(a \in A\) (line $22$).
+
+Finally, after closing the repetition structures, we create the arcs \(a \in A\) representing the OpenAPI links (line $28$). We remove all transitions that do not have connections to places (line $29$), and we return the CPN (line $30$).
+
+
+\begin{figure}[!htp]
+    \center
+    \includegraphics[width=1\columnwidth]{figures/Algorithm_1.png}
+    \label{alg:createCPNfromOpenApi}
+\end{figure}
+
+
+ \begin{algorithm}[!htp]
+ \caption{Creating CPN from an OpenAPI Specification}\label{alg:createCPNfromOpenApi}
+
+ \hspace*{\algorithmicindent} \textbf{Input:} \\
+ \hspace*{\algorithmicindent}doc, an OpenAPI Specification\\ 
+ \hspace*{\algorithmicindent} \textbf{Output:} \\ 
+ \hspace*{\algorithmicindent}\(CPN\), a Colored PetriNet composed by (P,T,A,V,G,E)
+ \begin{algorithmic}[1]
+ \State $CPN \gets create\_empty\_CPN()$;
+ \ForEach {\((path, Path Item Object) \in doc.paths\) \do}
+     \ForEach {\((http\_method, Operation Object) \in Path Item Object\) \do}
+     \ForEach {\((http\_status\_code, Response Object) \in Operation Object.responses\) \do}
+     \State {$transtion \gets create\_transition(path, http\_method, http\_status\_code)$}; 
+     \State $CPN.add\_to\_CPN(transtion)$
+     \State $request\_body \gets Operation Object.requestBody$
+     \ForEach {\((media\_type, Media Type Object) \in  request\_body.content\) \do}
+     \State $list\_of\_properties \gets Media Type Object.schema.properties$
+      \ForEach {\((property\_key, property\_value) \in list\_of\_properties\) \do}
+     
+     \If {$is\_targeted\_by\_link(property\_key, Operation Object)$} 
+     \State {$place \gets create\_place(RequestBodyObject, transition)$};
+     \State $CPN.add\_to\_CPN(place)$;
+     \State $CPN.create\_arc(transition, place)$;
+     \EndIf
+     \EndFor
+     \EndFor
+    
+     \ForEach {\(Parameter Object  \in Operation Object.parameters\) \do}
+     \If {$is\_targeted\_by\_link(ParameterObject)$} 
+     \State {$place \gets create\_place(ParameterObject, transition)$};
+     \State $CPN.add\_to\_CPN(place)$;
+     \State $CPN.create\_arc(transition, place)$;
+     \EndIf
+     \EndFor
+    
+     \EndFor
+     \EndFor
+ \EndFor
+ \State $create\_link\_arcs(doc.paths, CPN)$
+ \State $remove\_disconnected\_transitions(CPN)$
+ \State \Return $CPN$;
+
+ \end{algorithmic}
+ \end{algorithm}
+
+
+Considering as an example an API with $2$ endpoints, \textit{/login} and \textit{/accounts/{id}}, that accept a \textit{POST} and a \textit{GET} request, respectively. Where the first request returns in its response the \textit{id} parameter used by the second request. The OpenAPI Specification related to this API can be viewed here~\footnote{Available online in \url{https://app.swaggerhub.com/apis/ailton07/BOLAExample/1.0.0}}. Applying the Algorithm~1, we can obtain the CPN shown in Figure~\ref{fig:CPN_OAS-BOLAExample}. Initially, having as input the OpenAPI Specification cited, we create an empty CPN (line $1$). Then, the execution from lines $2$ to $27$ on the path \textit{/login} creates the CPN illustrated in Figure~\ref{fig:CPN_OAS-BOLAExample}-a). The second iteration of the code from lines $2$ to $27$ over the path \textit{/accounts/{id}} results in the CPN shown in Figure~\ref{fig:CPN_OAS-BOLAExample}-b). Finally, the code execution from lines $28$ and $29$ results in the CPN shown in Figure~\ref{fig:CPN_OAS-BOLAExample}-c).
+
+
+\begin{figure}[!htp]
+    \center
+    \includegraphics[width=1\columnwidth]{figures/Process_of_creating_a_CPN_from_OpenAPI_horizontal.png}
+    \caption{CPN obtained from the transformation of the OpenAPI Specification.}
+    \label{fig:CPN_OAS-BOLAExample}
+\end{figure}
+
+
+\TODO{\ldots}

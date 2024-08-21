@@ -1,0 +1,36 @@
+\section{Introduction}
+\label{sec:introduction}
+
+% REST -> RESTful
+A common software architectural style for creating web services today is {\em Representational State Transfer} (REST), which specifies a set of rules (constraints) on web services~\cite{fielding2000architectural}. In REST, data and functionality are considered resources and are accessed and manipulated by using a uniform and well-defined set of rules.
+%https://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm
+%
+REST is constrained to a client/server architecture (the client is the one requesting the resources, while the server has the resources itself) and is designed to use a stateless communication protocol (typically, HTTP). 
+%Each resource is accessed using {\em Uniform Resource Identifiers} (URIs).
+ Web services that follow the REST architectural style are known as {\em RESTful web services}~\cite{RESTful-WS-book-07}.
+
+% REST API
+RESTful web services expose their services to the Internet using Application Programming Interfaces (called RESTful or REST APIs). These API types are also commonly used when exposing internal interfaces in microservice architectures~\cite{madden2020api}. Many popular web services, such as Twitter, Facebook, or Instagram, to name a few, have a REST API to allow users and developers connect and interact with their services in a simple and fast way. 
+%https://www.doi.org/10.1007/978-3-319-67425-4_12
+%https://link.springer.com/chapter/10.1007/978-1-4842-1275-2_3
+% 
+% OpenAPI
+When creating an REST API, it is important to follow industry standards as a way to ease development and increase customer adoption. Today, most REST APIs are described with OpenAPI~\cite{OpenAPISpecification}, which defines a standard language-independent interface for RESTful APIs. Many frameworks for building REST APIs (such as Falcon, Flask, or Tornado, to name a few) include OpenAPI support. 
+
+% Ataques a web
+As Web services are continuously available on the Internet, they are a common target for cyberattacks~\cite{Clay2022}. Most attacks fall into the category of  \textit{Structured Query Language injection} (SQLi)~\cite{MSA-ICIT-21} and \textit{cross-site scripting} (XSS)~\cite{Emmons2022}, although other attacks, such as \textit{denial of service} and authentication or session management, are also feasible~\cite{saltQ32022}. In this regard, there are several major players in the information security industry that provide secure design and programming guidelines to prevent vulnerabilities and reduce risks in web systems. One of these major players is the {\em Open Web Application Security Project} (OWASP) foundation\footnote{Accessible in~\url{https://owasp.org/}}, which provides a security methodology used as a benchmark for web application security audits. In particular, they periodically publish the top 10 most critical application security risks, outlining mechanisms to minimize them\footnote{Accessible in~\url{https://owasp.org/www-project-top-ten/}}.
+%https://www.trendmicro.com/en_ae/research/22/b/recent-cyberattacks-open-source-web-servers.html
+%https://blog.cloudflare.com/ddos-attack-trends-for-2022-q2/
+%https://link.springer.com/article/10.1007/s00450-009-0092-6
+%https://ieeexplore.ieee.org/abstract/document/8993264
+%https://owasp.org/www-project-top-ten/
+%https://owasp.org/
+
+% Problema: la especificación NO es verificable
+Although the textual specification of a REST API is not well suited for formal methods (such as computer aided verification), the standardization of its specification opens an exciting path for automated tools to analyze and test REST APIs for correctness. Following this direction, in this paper we investigate the automatic transformation of a REST API specified by OpenAPI~\cite{OpenAPISpecification} to Petri nets~\cite{Murata89}, which is a mathematical model commonly used to represent distributed, concurrent, or parallel systems.  Obtaining a formal model as a Petri net allows us to take advantage of  all existing Petri net analysis techniques and detect possible security risks directly in the specification.
+
+% Objetivo y contribuciones del artículo
+The contributions of this paper is twofold. First, we propose a transformation from OpenAPI to Petri net. To do this, we study the latest OpenAPI specification that targets REST APIs (namely, version $3.0.3$) and model its parts using Colored Petri nets (CPNs)~\cite{jensen2009coloured}, an extension of the classical Petri net formalism with data, time, and hierarchy. These models are built into a single CPN that is suitable for analysis with specific tools such as CPN Tools~\cite{ratzer2003cpn}. In addition, we provide a tool, dubbed {\nameTool}, that automatically performs the model transformation. Second, we apply our tool on different case studies of vulnerable web applications to show its applicability. In particular, we focus on the first OWASP Top 10 2019 security risk, related to broken access control~\cite{AJBC-ICNGIoT-22}. Using a JSON event log (obtained from a webserver that runs a web app that conforms to the given REST API specification) and its corresponding CPN model, we show how our tool can easily detect this vulnerability in the CPN obtained from the OpenAPI specification by analyzing the event log. 
+
+% Balance
+The rest of this paper is as follows. Section~\ref{sec:background} gives some background on the OpenAPI specification and CPN. Section~\ref{sec:running_example}  presents the running example that is used throughout the paper. We then describe our methodology and our tool,  {\nameTool}, in Section~\ref{sec:methodology}. Section~\ref{sec:evaluation} introduces evaluation and the limitations of our approach. We first test our approach on the running example, then on a user-based evaluation, and finally on a real-world vulnerable software to validate it. Section~\ref{sec:related_works} discusses related work. Section~\ref{sec:conclusions} concludes the paper along with future work.

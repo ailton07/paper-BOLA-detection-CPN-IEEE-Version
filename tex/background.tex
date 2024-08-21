@@ -1,0 +1,127 @@
+\section{Background}
+\label{sec:background}
+
+\newcommand{\code}[1]{\texttt{#1}}
+
+In this section, we first provide some background on the OpenAPI Specification, and  then Colored Petri nets.
+
+\subsection{OpenAPI Specification}
+
+OpenAPI Specification (OAS)~\cite{OpenAPISpecification} defines a widely accepted,  vendor-independent, language-independent open specification for the description of RESTful APIs.  It allows both humans and computers to discover and understand the capabilities of a service without the need to access source code, additional documentation, or even inspect of network traffic. An OAS-compliant OpenAPI document is itself a JSON object, which can be represented in JSON or YAML format.
+
+\sloppy
+The extended Backus-Naus form~\cite{ISO-14977} of an OAS-compliant OpenAPI document is (partially) shown in Listing~\ref{lst:oas_backusnaur}. It is made up of a set of fields that describe a REST API. There are two types of fields: {\em fixed fields}, which have a declared name; and {\em patterned} fields, which declare a regex pattern for the field name. A patterned field must have a unique name within the containing object. These fixed fields are {\tt openapi}, {\tt info}, {\tt servers}, {\tt paths}, {\tt components}, {\tt security}, {\tt tags}, and {\tt externalDocs}. %In the following paragraphs, we will describe the main parts of the OAS framework with version $3.0.3$, which is the latest version to describe the RESTful APIs.
+%
+The patterned field we are most interested in is {\tt paths}, which is responsible for listing the available paths and operations for the API.
+
+Each \code{Path} object contains a patterned field that is of type \code{Path Item}. This object is responsible for describing the HTTP operations available on that particular path. The operations are named as the HTTP method (in plain text, as defined by RFC7231~\cite{fielding2014hypertext}) and is of type \code{Operation}. It describes a single API operation on a path and provides a summary, description, and unique identifier, further describing the operation parameters, payloads, and possible server responses. In particular, the list of parameters applicable for all the operations described in this path are in the {\tt parameters} fixed field, which is an array containing \code{Parameter} objects. This array can also contain \code{Reference} objects, which reference other components in the specification, internally and externally. These parameters can be later redefined at the operation level (via the \code{Operation} object).
+%url{https://datatracker.ietf.org/doc/html/rfc7231\#section-4} --> misc en fichero bib
+
+%Given this structure we will explore in more detail how to specify the input data of an operation (\textit{parameters} and \textit{requestBody}) and  how to specify the output data of an operation (\textit{responses}).
+Each \code{Parameter} object describes a single operation parameter as a combination of at least one name and one location (fixed fields {\tt name} and {\tt in}, respectively). The fixed field  \texttt{schema}, of type \code{Schema}, defines the structure and the type of the parameter (it can be a number, a string, a boolean value, an array, or an object).%. (a extended subset of the JSON Schema Specification Wright Draft~\cite{})
+%~\footnote{\url{https://json-schema.org/specification.html}}.  ---> misc en .bib
+Another fixed field of the \code{Operation} object is {\tt requestBody}. This object is responsible for describing the body of the HTTP request  and the formats for that particular \code{Operation} object through its   \texttt{content} fixed field, of type \code{Media Type}. This object provides the schema that defines the content of the request and examples for the media type identified by its key, which is a standard RFC6838 media type value~\cite{RFC-6838}.
+%https://datatracker.ietf.org/doc/html/rfc6838
+
+\begin{lstlisting}[caption={An excerpt from the Backus-Naus form of the OpenAPI specification (in YAML).},label=lst:oas_backusnaur,basicstyle={\ttfamily\small},frame=single,breaklines=true,tabsize=4]
+oas-document ::= openapi info paths { optional-fields }
+optional-fields ::= servers | components | security | 
+						tags | externalDocs
+paths ::= "paths:" path+
+path ::=  path-item [ summary]  [ description] [ servers ] [ $ref ] { parameters } 
+path-item ::= ["get:" operation ] ["post:" operation ] ["delete:" operation ] ["options:" operation ] ["head:" operation ] ["patch:" operation ] ["trace:"  operation ]
+operation ::= operationId responses [ request-body ] { parameters } 
+parameters ::= parameter | reference
+parameter ::= name in required [ schema ] ...
+request-body ::= "requestBody:" content+ [ description ]  [ required ]
+content ::=  media-type  [ schema ] [ example ] [ examples ] [ encoding ]
+media-type ::= "application/json:" | "application/html:" ...
+responses :: =  [default] HTTP-status+
+HTTP-status ::= HTTP-status-code { response | reference }
+response ::= description headers* { content } { links }
+HTTP-status-code ::= "200:" | "400:" ...
+links ::= link | reference
+link ::= operation-ref operation-id [ request-body ] [ description ] [ server ] { parameters }
+\end{lstlisting}
+
+
+The \code{Operation} object has a single mandatory fixed field, {\tt responses}, which defines the list of  responses expected from an operation. In particular, it maps a HTTP response code (as defined by RFC7231~\cite{fielding2014hypertext}) to the expected response. The response can be a \code{Response} or a \code{Reference} object. A \code{Response} object describes a single operation response, containing a required field called \texttt{description} to textually detail the meaning of the response in the context of this operation, as a way to help developers understand better how to react to this response. It can also contain a \textit{content} field, which is a map containing descriptions of possible response payloads (similar to the same field in requests).
+%https://datatracker.ietf.org/doc/html/rfc7231\#section-6
+
+The \code{Response} object can include a fixed field called {\tt links}, which maps the operation links that can be followed from this particular response. Map elements can be a \code{Link} or \code{Reference} object. A \code{Link} object represents a possible design-time link for a response. The presence of a link provides a known relationship and traversal mechanism between responses and other operations in the web service. Note that its presence does not guarantee the caller's ability to invoke it successfully (for instance,  authentication or authorization restrictions). A linked operation can be identified using the \textit{operationRef} field (a relative or absolute URI reference to an operation) or the \textit{operationId} field (the name of an existing resolvable operation). This object can also describe how the return values of one operation can be used as input parameters and request body for other operations via the \textit{parameters} and \textit{requestBody} fields, respectively.
+
+The approach we present here for the transformation from OpenAPI to CPNs requires having an OpenAPI specification with {\tt links}. Unfortunately, this field is not widely used in general, which may be a limitation to the importance of our approach. In this regard, we have manually analyzed 1955 OpenAPI specifications from the open source API directory APIs.guru\footnote{Accessible in \url{https://apis.guru/}.}, as in~\cite{Kus2020}, and detected only 9 using {\tt links} (listed in~\cite{links2cpn}). However, we need a way to formally relate responses and other operations in the web service under analysis so thus we can relate the components of the Petri net that we iteratively create when parsing the OpenAPI specification. Therefore, similar to~\cite{DBLP:journals/corr/abs-2201-10833,haddad2022openapi}, we assume that development teams can update their OpenAPI specifications if they want to detect BOLA vulnerabilities with our approach.
+
+\subsection{Colored Petri Nets (CPNs)}
+
+Colored Petri nets~\cite{jensen2009coloured} are a well-known formalism for the design and analysis of concurrent systems. CPNs are supported by {\em CPN Tools}~\cite{ratzer2003cpn}, which is a tool that allows us to easily create, edit, simulate, and analyze CPNs. The following assumes that the reader is familiar with the basics of Petri nets. First, we give an informal introduction to Petri nets and Colored Petri nets. Next, we provide a formal definition
+of the CPN formalism. For a full description of the CPN formalism, the reader is referred to~\cite{jensen2009coloured}.
+
+Petri nets~\cite{Murata89} are a mathematical and graphical formalism that easily represent common characteristics of computing systems, such as branching, sequencing, or concurrency, to name a few. Roughly speaking, a Petri net is a bipartite graph of {\em places} and {\em transitions} joined by {\em arcs}, describing the flow of a system with concurrency and synchronization capabilities. Graphically, places are represented by circles, transitions by rectangles, and arcs are represented by directed arrows. An arc may have an integer inscription, indicating the {\em weight} of the arc. A place can contain {\em tokens}, graphically represented by black dots (or by a number) within the place and denoted as the {\em marking} of the place. When all input places of a transition $t$ are marked with a number of tokens equal or greater than their weights, $t$ is said to be {\em enabled}. An enabled transition can {\em fire}, resulting in a new marking obtained by removing tokens from input places and setting tokens to output places. The number of tokens removed/set in each place corresponds to the weight of the arc that connects each place with the transition.
+
+A CPN~\cite{jensen2009coloured} is an extension of Petri nets, where places have an associated color set (a data type) that specifies the set of token colors  allowed at that place. That is, each token at a place in a CPN has an attached data value (color) that matches the corresponding color set of the place. For instance, a place can have as its color set the integer set {\tt INT}, the Cartesian product untimed color set {\tt INT2 = INTxINT}, or a singleton color set ({\tt UNIT}), which contains a single empty value denoted by {\em unit}. Other complex data types can also be defined by using data types constructors, such as {\em list}, {\em union}, and {\em record}. Together, the number of tokens and the token colors in the individual places represent the {\em state} of the system~\cite{gomez2019profiling}. According to~\cite{vanderAalst2016}, CPNs are the most widely used Petri net-based formalism that can deal with issues related to data and time.
+
+% Ejemplo de CPN?
+
+More formally: 
+\begin{definition}~\cite{jensen2009coloured}
+A Colored Petri Net (CPN) is a tuple $\tuple{P,T,A,V,G,E,\pi}$, where\footnote{We use the classical Petri net notation to denote the precondition $\preset{x}$ and postcondition $\postset{x}$ of both places and transitions:
+%
+$ \forall x \in P\,\cup\,T\,:\,
+\preset{x} = \{ y \,|\, (y,x) \in A\}; 
+   \postset{x} = \{ y \,|\, (x,y) \in A\}
+$.}:
+%
+\begin{itemize}
+\item $P$ is a finite set of {\em places}, with colors in a set $\Sigma$.%, which can be either timed or untimed.
+We denote the color set of a place $p$ by $\Sigma_{p}$. 
+\item $T$ is a finite set of {\em transitions} ($P\cap T = \emptyset$).
+\item $A \subseteq (P\times T)\,\cup\,(T \times P)$ is a set of directed {\em arcs}. PT-arcs are those connecting places with transitions ($P \times T$), while TP-arcs connect transitions with places ($T \times P$).
+\item $V$ is a finite set of {\em typed variables} in $\Sigma$, i.e., ${\it Type}(v) \in \Sigma$, for all $v \in V$.
+\item $G\,:\, T \longrightarrow {\it EXPR}_V$ is the {\em guard function}\footnote{${\it EXPR}_V$ denotes expressions built using the variables in $V$, with the same syntax supported by {\em CPN Tools}.}, which assigns a Boolean expression to each transition, i.e., ${\it Type}(G(t))={\it Bool}$. 
+\item $E\,:\, A \longrightarrow {\it EXPR}_V$ is the {\em arc expression function}, which assigns an expression to each arc. Arc expressions evaluate to multisets of the set of colors of the place connected to the arc. For any transition $t \in T$,  the arc expressions of the PT-arcs connected to $t$ are called {\it PT-arc expressions of $t$} (respectively, for TP-arcs).
+%In the case of timed color sets, the arc expressions can indicate a delay for the time at which the tokens will be available, with the syntax ${\it ms}@+x$, where ${\it ms}$ is the multiset of tokens and $x$ the time delay.
+%
+\item $\pi\,:\,T \longrightarrow \nat$ is the {\em priority function}, which assigns a priority level to each transition. The priority level of a transition $t_i$ has a higher priority level than a transition $t_j$ iff $\pi(t_i) > \pi(t_j)$.
+\end{itemize}
+\end{definition}
+
+
+\begin{definition}({\em Marking}) Given a CPN $N=\tuple{P,T,A,V,G,E,\pi}$, a {\em marking} $M$ of $N$ is defined as a function $M\,:\,P \longrightarrow {\cal B}(\Sigma)$, such that $\forall p \in P, \; M(p) \in {\cal B}(\Sigma_p)$, i.e.,  the marking of $p$ must be a multiset of colors in $\Sigma_p$ (which can be empty). 
+\end{definition}
+
+\begin{definition}({\em Marked CPN}) A {\em marked CPN}  (MCPN) is then defined as a pair $\tuple{N,M}$, where $N$ is a CPN and $M$ is a marking of it.
+%
+\end{definition}
+
+We define the semantics for MCPNs as in~\cite{jensen2009coloured},  taking into account that transitions have associated priorities. In this paper, we assume that all transitions have a priority level of 1 (i.e., $\forall t \in T, \pi(t) = 1$). We first introduce the notion of {\em binding}, then the {\em enabling condition}, and finally the {\em firing rule} for MCPNs.
+
+\begin{definition}({\em Bindings}) Let $N=\tuple{P,T,A,V,G,E,\pi}$ be a CPN.  For any transition $t$, ${\it Var}(t)$ denotes the set of variables that appear in the PT-arc expressions of $t$.%
+So, a {\em binding} of a transition $t \in T$ is a function $b$ that maps each variable $v \in {\it Var}(t)$ into a value $b(v) \in {\it Type}(v)$. $B(t)$ will denote the set of all possible bindings for $t \in T$. For any expression $e \in {\it EXPR}_V$, $e\langle b \rangle$ will denote the evaluation of $e$ for the binding $b$.
+%
+A {\em binding element} is then defined as a pair $(t,b)$, where $t \in T$ and $b \in B(t)$. The set of all binding elements is denoted by ${\it BE}$.
+\end{definition}
+
+\begin{definition} \label{permitidas} ({\em Enabling condition}) Let $\tuple{N,M}$ be a MCPN. We say that a binding element $(t,b) \in {\it BE}$ is {\em enabled} at marking $M$ when the following conditions are fulfilled:
+
+\begin{enumerate}
+%
+	\item The guard of $t$ evaluates to true for binding $b$: $G(t)\langle b \rangle = {\it true}$.
+	\item For all $p \in \precond{t}$, $E(p,t)\langle b\rangle$ is included in $M(p)$, and these tokens on $M(p)$ have a timestamp less than or equal to the current time, i.e., we have in $M(p)$ enough available tokens to fire $t$ with the binding $b$.
+	\item There is no other binding element $(t',b') \in {\it BE}$ fulfilling the previous conditions such that $\pi(t') < \pi(t)$.
+% 
+\end{enumerate}
+
+%Time can only elapse when there is no enabled binding element for the current time. In this case, time elapses to the earliest time at which some transition can be fired.
+\end{definition}
+
+\begin{definition}({\em Firing rule)} Let $N=\tuple{P,T,A,V,G,E,\pi}$ be a CPN, $M$ a marking of $N$, and $(t,b) \in {\it BE}$ an enabled binding element  at marking $M$.
+
+The firing of $(t,b)$ has the following effects on $M$:
+
+\begin{itemize}
+ \item For any $p \in \preset{t}$, the tokens in $E(p,t)\langle b\rangle$ are removed from $M(p)$.
+ %
+ \item For any $p \in \postset{t}$, the tokens in $E(t,p)\langle b\rangle$ are produced in $M(p)$.
+ \end{itemize}
+\end{definition}

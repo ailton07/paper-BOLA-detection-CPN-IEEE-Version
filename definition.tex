@@ -1,0 +1,121 @@
+% Environments (they are not defined in svsing2e.sty)
+
+%\newtheorem{definition}{Definition}
+%\newtheorem{theorem}{Theorem}
+%\newtheorem{lemma}[theorem]{Lemma}
+%\newtheorem{corollary}[theorem]{Corollary}
+%\newtheorem{proposition}[theorem]{Proposition}
+%\newtheorem{property}[theorem]{Property}
+%\newtheorem{example}{Example}
+\newcommand{\bop}{\noindent{\bf Proof: }}
+\newcommand{\eop}{\hfill$\Box$}
+%\newenvironment{proof}{\bop}{\eop}
+\newcommand{\balgo}{\noindent{\bf Algorithm }}
+%\newenvironment{algorithm}{\balgo}
+
+% Symbols for propositional logic and Boolean functions
+
+\newcommand{\til}{\widetilde}
+\newcommand{\inv}{\overline}           % Complement
+\newcommand{\loor}{\vee}               % OR
+\newcommand{\loand}{\wedge}            % AND
+\newcommand{\xor}{\oplus}              % XOR
+\newcommand{\xnor}{\inv\oplus}         % XNOR
+\newcommand{\bool}{\mathbb{B}}         % Boolean domain
+\newcommand{\one}{\mathbf{1}}          % Boolean function 1
+\newcommand{\zero}{\mathbf{0}}         % Boolean function 0
+\newcommand{\true}{\mbox{\textit{True}}} % True
+\newcommand{\false}{\mbox{\textit{False}}} % False
+
+% Some sets and functions
+
+\newcommand{\nat}{\mathbb{N}}          % Natural numbers
+\newcommand{\integer}{\mathbb{Z}}      % Integer numbers
+\newcommand{\real}{\mathbb{R}}         % Real numbers
+\newcommand{\boolf}{\mathbb{F}}        % Set of boolean functions
+
+\newcommand{\imat}{\mathbb{C}}         % Incidence matrix
+\newcommand{\cc}{\bf{c}}         % Critical cycle
+
+\newcommand{\ca}{\bf{a}}         % Critical arc 
+
+% Operations on sets
+
+\newcommand{\union}{\cup}
+\newcommand{\inter}{\cap}
+\newcommand{\bigunion}{\bigcup}
+\newcommand{\biginter}{\bigcap}
+\newcommand{\diff}{\setminus}
+
+% Symbols for Petri nets, transition systems, STGs and SGs.
+
+\def\pn/{\mbox{\textsf{PN}}}       % Petri net
+\def\mg/{\mbox{\textsf{MG}}}       % Marked graph
+\def\smg/{\mbox{\textsf{SMG}}}     % Stochastic Marked graph
+\def\tmg/{\mbox{\textsf{TMG}}}     % Timed Marked graph
+%\def\ptmg/{\mbox{\textsf{PTMG}}}   % Pipelined Timed Marked graph
+\def\emg/{\mbox{\textsf{EMG}}}   % Elastic Marked graph
+\def\sm/{\mbox{\textsf{SM}}}       % State machines
+\def\rg/{\mbox{\textsf{RG}}}       % Reachability Graph
+\def\cln/{\mbox{\textsf{CLN}}}     % Causal Logic Net
+%\def\mgn/{\mbox{\textsf{MGN}}}     % Multi-guarded net
+%\def\mgmg/{\mbox{\textsf{MGMG}}}   % Multi-guarded marked graph
+%\def\tmgmg/{\mbox{\textsf{TMGMG}}}   % Timed Multi-guarded marked graph
+\def\gn/{\mbox{\textsf{GN}}}       % Multi-guarded net
+\def\mgmg/{\mbox{\textsf{GMG}}}    % Multi-guarded marked graph
+\def\tmgmg/{\mbox{\textsf{TGMG}}}  % Timed Multi-guarded marked graph
+\def\li/{\mbox{\textsf{LI}}}       % Latency-insensitive
+
+% Nomenclature for Petri nets.
+
+\newcommand{\reachm}[1]{[#1\rangle}             % reachable markings
+\newcommand{\firing}[3]{#1[#2\rangle #3}        % Transition firing
+\newcommand{\preset}[1]{\mbox{$^\bullet#1$}}             % Preset
+\newcommand{\postset}[1]{\mbox{$#1^\bullet$}}            % Postset
+\newcommand{\selfloop}[1]{\mbox{$^\bullet#1^\bullet$}}   % Selfloop-set
+\newcommand{\net}{\mbox{\large\ensuremath{\cal N}}}
+
+% Nomenclature for MGN
+\newcommand{\gpreset}[1]{\mbox{$^\star#1$}}             % Guarded Preset
+\newcommand{\gpostset}[1]{\mbox{$#1^\star$}}            % Guarded Postset
+\newcommand{\gselfloop}[1]{\mbox{$^\star#1^\star$}}     % Guarded Selfloop-set
+\newcommand{\gproj}{\downarrow}                         % Projection on transitions
+\newcommand{\bagpower}[1]{\mbox{$\parallel#1\parallel$}} % power of an element in a bag
+\newcommand{\prebag}[1]{\mbox{$^\oplus#1$}}             % Prebag
+\newcommand{\posbag}[1]{\mbox{$#1^\oplus$}}             % Postbag
+
+
+% Delay (in timing)
+
+\def\delay/{{\mbox{$\delta$}}}
+
+% Arcs
+%
+% \arc{s}{s'}                    this is a conventional arc
+% \larc{s}{e}{s'}                 this is a labeled arc
+% \longarc{s}{s'}                this is a long arc
+% \longlarc{s}{s'}               this is a long labeled arc
+%
+% All the previous definitions can be used with the suffix src,
+% which indicates that only the source of the arc is used.
+% If the suffix tgt is used, only the target is used
+
+\newcommand{\arc}[2]{#1\rightarrow #2}
+\newcommand{\larc}[3]{#1\stackrel{#2}{\rightarrow}#3}
+\newcommand{\longarc}[2]{#1\longrightarrow #2}
+\newcommand{\longlarc}[3]{#1\stackrel{#2}{\longrightarrow}#3}
+
+\newcommand{\arcsrc}[1]{#1\rightarrow}
+\newcommand{\larcsrc}[2]{#1\stackrel{#2}{\rightarrow}}
+\newcommand{\longarcsrc}[1]{#1\longrightarrow}
+\newcommand{\longlarcsrc}[2]{#1\stackrel{#2}{\longrightarrow}}
+
+\newcommand{\arctgt}[1]{\rightarrow #1}
+\newcommand{\larctgt}[2]{\stackrel{#1}{\rightarrow}#2}
+\newcommand{\longarctgt}[1]{\longrightarrow #1}
+\newcommand{\longlarctgt}[2]{\stackrel{#1}{\longrightarrow}#2}
+
+
+\def\marginal#1{\marginpar{\scriptsize{#1}}}
+%\def\mike{\marginal{\ M:?}}
+\def\mike{\marginal{\ }}

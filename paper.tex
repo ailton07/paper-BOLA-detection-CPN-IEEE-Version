@@ -1,0 +1,279 @@
+\documentclass[pdftex,twocolumn,epjc3]{svjour3}
+
+% correct bad hyphenation here
+%\hyphenation{op-tical net-works semi-conduc-tor}
+\usepackage{graphicx}
+\usepackage{latexsym}
+\usepackage{times}
+
+\RequirePackage[T1]{fontenc}
+
+\smartqed  % flush right qed marks, e.g. at end of proof
+
+\RequirePackage{graphicx}
+\RequirePackage{mathptmx}   
+
+
+\usepackage{color}
+\usepackage{amssymb}
+
+\usepackage[htt]{hyphenat}
+\usepackage[cmex10]{amsmath}
+\usepackage{multirow}
+\usepackage{colortbl}
+
+%\usepackage{algorithm}
+\usepackage{algorithmic} % Mandatory!
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+
+\renewcommand{\algorithmicfor}{\textbf{for each}}
+\usepackage[ruled, lined, linesnumbered, commentsnumbered, longend]{algorithm2e}
+\makeatletter
+\renewcommand{\@algocf@capt@plain}{above}% formerly {bottom}
+\makeatother
+
+\usepackage[utf8]{inputenc} % Caracteres con acentos.
+
+\usepackage{subcaption} % subcaptions in figures
+
+%\graphicspath{{Fig/}}
+
+\RequirePackage[english]{babel} % English hyphenation
+\usepackage{url}
+
+\newcommand{\secondAuthor}{Ricardo J. Rodr\'{i}guez}
+\newcommand{\secondAuthorShort}{R.~J.~Rodr\'{i}guez}
+\newcommand{\mailRJ}{rjrodriguez@unizar.es}
+\newcommand{\DIIS}{Dpto. de Informática e Ingeniería de Sistemas}
+\newcommand{\IIIA}{Instituto de Investigación en Ingeniería de Aragón (I3A)}
+\newcommand{\UZ}{Universidad de Zaragoza, Spain}
+
+
+\newcommand{\mailTo}[1]{\url{#1}}
+
+\newcommand{\firstAuthor}{Ailton Santos Filho}
+\newcommand{\firstAuthorShort}{A.~S.~Filho}
+\newcommand{\thirdAuthor}{Eduardo L. Feitosa}
+\newcommand{\thirdAuthorShort}{E.~L.~Feitosa}
+\newcommand{\mailAilton}{assf@icomp.ufam.edu.br}
+\newcommand{\mailEduardo}{efeitosa@icomp.ufam.edu.br}
+
+
+\newcommand{\paperTitle}{Automated Attack Detection in REST APIs through OpenAPI to Colored Petri Nets Transformation}
+
+\newcommand{\paperTitleShort}{\paperTitle}
+\newcommand{\authorNames}{{\firstAuthor}, {\secondAuthor}, {\thirdAuthor}}
+\newcommand{\authorNamesShort}{{\firstAuthorShort}, {\secondAuthorShort}, {\thirdAuthorShort}}
+\newcommand{\authorsMailTo}{\mailTo{\mailRJ}}
+\newcommand{\keywordsList}{RESTful web services, OpenAPI, Colored Petri nets, security analysis, vulnerabilities, broken access control, Web application security}
+
+\newcommand{\correspondingText}{Corresponding author: Ricardo~J.~Rodríguez. {\DepUZ},
+{\UZ}.
+Email: {\mailTo{\mailRJ}}. Phone: (+34) 876555531 Fax: (+34) 976 761914.}
+
+
+\newcommand{\ackText}{The research of Ricardo J. Rodríguez was supported by the grant TED2021-131115A-I00 funded by MCIN/AEI/ 10.13039/501100011033 and by European Union NextGenerationEU/PRTR, and by the University, Industry and Innovation Department of the Aragonese Government under {\em Programa de Proyectos Estratégicos de Grupos de Investigación} (DisCo research group, ref. T21-23R).}
+
+\newcommand{\IGNORE}[1]{}
+\newcommand{\TODO}[1]{\textcolor{red}{#1}}
+\newcommand{\REVIEW}[1]{\textcolor{blue}{#1}}
+\newcommand{\comentarioJavier}[1]{ \textcolor{blue}{#1}}
+
+\usepackage{hyperref}
+\usepackage{breakurl}
+\hypersetup{
+  baseurl={\mailRJ},
+  pdftitle={{\paperTitle} - {\authorNamesShort}},%
+  pdfauthor={\authorNames},%
+  pdfproducer={\LaTeX},%
+  pdfsubject={{\paperTitle} - {\authorNamesShort}},%
+  pdfkeywords={\keywordsList}%
+}
+%\RequirePackage[colorlinks,citecolor=blue,urlcolor=blue,linkcolor=blue]{hyperref}
+
+
+\usepackage{listings}
+\usepackage{xcolor}
+\newcommand*{\doi}[1]{}
+
+\definecolor{LightCyan}{rgb}{0.88,1,1}
+\definecolor{LightGray}{gray}{0.85}
+
+\usepackage{resizegather}
+
+\usepackage{lipsum}
+\usepackage{cite}
+
+\usepackage{listings}
+
+\newcommand{\precond}[1]{\hspace*{-0.4em}~^{\bullet}\hspace*{-0.05em}#1}
+
+\def\nameTool{\tt Links2CPN}
+
+\usepackage{enumerate}
+
+\usepackage{tikz}
+\usetikzlibrary{babel,positioning,calc,arrows.meta,bending,fit,backgrounds,arrows,shapes, decorations}
+
+\usepackage{fontawesome}
+  \tikzstyle{label}=[
+  font=\footnotesize,
+  ]
+
+  \tikzstyle{box}=[
+  draw=black,
+  rectangle,
+  minimum height=20pt,
+  text width=90pt,
+  fill=white,
+  text centered]
+  
+  \tikzstyle{boxa}=[
+  label,
+  text centered,
+  left,
+  midway,
+  text width=50pt
+  ]
+\tikzstyle{separator}=
+[minimum width=50pt]
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+            \node[shape=circle,draw,inner sep=2pt,solid] (char) {#1};}}
+
+\RequirePackage[numbers,sort&compress]{natbib}
+
+\journalname{International Journal of Information Security}
+
+%% Columns definitions
+% New type of column that mimics tabularx's X colmnb but centered. The column is "Y"
+\newcolumntype{Y}{>{\centering\arraybackslash}X}
+% New column types C, R and L that allows width specification
+\newcommand{\PreserveBackslash}[1]{\let\temp=\\#1\let\\=\temp}
+\newcolumntype{C}[1]{>{\PreserveBackslash\centering}p{#1}}
+\newcolumntype{R}[1]{>{\PreserveBackslash\raggedleft}p{#1}}
+\newcolumntype{L}[1]{>{\PreserveBackslash\raggedright}p{#1}}
+
+\newcommand\YAMLcolonstyle{\color{red}\mdseries}
+\newcommand\YAMLkeystyle{\color{black}\bfseries}
+\newcommand\YAMLvaluestyle{\color{blue}\mdseries}
+
+\makeatletter
+
+\newcommand\language@yaml{yaml}
+
+\expandafter\expandafter\expandafter\lstdefinelanguage
+\expandafter{\language@yaml}
+{
+  keywords={true,false,null,y,n},
+  keywordstyle=\color{darkgray}\bfseries,
+  basicstyle=\YAMLkeystyle,                                 % assuming a key comes first
+  sensitive=false,
+  comment=[l]{\#},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{purple}\ttfamily,
+  stringstyle=\YAMLvaluestyle\ttfamily,
+  moredelim=[l][\color{orange}]{\&},
+  moredelim=[l][\color{magenta}]{*},
+  moredelim=**[il][\YAMLcolonstyle{:}\YAMLvaluestyle]{:},   % switch to value style at :
+  morestring=[b]',
+  morestring=[b]",
+  upquote=true,
+  literate =    {---}{{\ProcessThreeDashes}}3
+                {>}{{\textcolor{red}\textgreater}}1     
+                {|}{{\textcolor{red}\textbar}}1 
+                {\ -\ }{{\mdseries\ -\ }}3,
+}
+
+% switch to key style at EOL
+\lst@AddToHook{EveryLine}{\ifx\lst@language\language@yaml\YAMLkeystyle\fi}
+\makeatother
+
+\newcommand\ProcessThreeDashes{\llap{\color{cyan}\mdseries-{-}-}}
+
+\begin{document}
+
+\title{\paperTitle}
+
+\author{\firstAuthor\thanksref{e1,addr1} %\IEEEmembership{,~Member,~IEEE},
+\and \secondAuthor\thanksref{e2,addr2}%
+\and \thirdAuthor\thanksref{e3,addr1}
+%\thanks{{\firstAuthorShort} and {\thirdAuthorShort} are with the Institute of Computing, Federal University of Amazonas (UFAM). E-mail: {\mailTo{\mailAilton}, \mailTo{\mailEduardo}}}
+%\thanks{{\secondAuthorShort} is with the {\IIIA}, {\UZ}. E-mail:
+%{\mailTo{\mailRJ}}}%
+}
+
+\thankstext{e1}{e-mail: \mailTo{\mailAilton}}
+\thankstext{e2}{e-mail: \mailTo{\mailRJ}}
+\thankstext{e3}{e-mail: \mailTo{\mailEduardo}}
+
+\institute{Institute of Computing, Federal University of Amazonas (UFAM), Av. General Rodrigo
+Octavio Jordão Ramos, 1200, Coroado I, Manaus - AM, Brazil, 69067-005\label{addr1}
+          \and
+          {\IIIA},{\UZ}, Edificio I+D+i, Calle Mariano Esquillor s/n, Zaragoza, Spain, 50018\label{addr2}
+}
+
+\date{Received: date / Accepted: date}
+\maketitle
+
+\input{definition}
+\input{commands}
+
+\input{tex/abstract}
+
+\begin{keywords}
+\keywordsList
+\end{keywords}
+
+
+\input{tex/introduction}
+\input{tex/background}
+\input{tex/running_example}
+
+\input{tex/methodology}
+\input{tex/evaluation}
+\input{tex/related_work}
+\input{tex/conclusions}
+
+
+\section*{Research Data Policy and Data Availability Statements}
+
+The data that support the findings of this study are openly available in a software repository of GitHub~\cite{links2cpn}.
+
+\section*{Compliance with ethical standards}
+
+\begin{paragraph}{\bf Conflict of interest.}
+The authors declare that they have no conflict of interest.
+\end{paragraph}
+
+\begin{paragraph}{\bf Ethical approval.}
+%This article does not contain any studies with human participants or animals performed by any of the authors that require human or animal ethical approval.
+All procedures performed in studies involving human participants were in accordance with the ethical standards of the institutional research committee and with the 1964 Helsinki declaration and its later amendments or comparable ethical standards. %This UWE Bristol project has been classified as “low risk”.
+
+\end{paragraph}
+
+\begin{paragraph}{\bf Informed consent.}
+Informed consent was obtained from all individual participants included in the study.
+\end{paragraph}
+
+%% ACKs
+\begin{acknowledgements}
+{\ackText}
+\end{acknowledgements}
+
+\bibliographystyle{spbasic}
+\bibliography{biblio}
+
+\newpage
+\appendix
+
+\section{Excerpt of OpenAPI Used as a Running Example}
+\label{apx:openapi_example}
+
+\lstinputlisting[frame=single,caption={Excerpt of OpenAPI Used as a Running Example},label={lst:running_example_code},language=yaml, breaklines=true,basicstyle=\ttfamily\small]{src/openapi.yml}
+
+
+%%
+% Bibliography
+
+\end{document} \grid
